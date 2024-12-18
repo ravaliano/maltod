@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Google Maps</title>
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            background-color: #e8f0fe;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Map Container Styling */
+        #map {
+            height: 450px;
+            width: 90%;
+            margin: 20px auto;
+            border: 2px solid #ddd;
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Input Field Styling */
+        #pac-input {
+            margin: 15px auto;
+            width: 90%;
+            max-width: 500px;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s;
+        }
+
+        #pac-input:focus {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            outline: none;
+        }
+
+        /* Header Styling */
+        header {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #ff7eb3, #ff758c);
+            color: #fff;
+            border-radius: 0 0 15px 15px;
+        }
+
+        header h1 {
+            font-size: 32px;
+            margin: 10px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        header h1::before {
+            content: "\1F5FA"; /* Globe emoji */
+            margin-right: 10px;
+        }
+
+        header p {
+            font-size: 18px;
+            margin: 5px 0;
+        }
+
+        /* Highlight Styling */
+        header p strong {
+            color: #ffd700;
+        }
+
+        /* Footer Styling */
+        footer {
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            background-color: #f3f4f6;
+            border-top: 1px solid #ddd;
+            margin-top: 20px;
+        }
+
+        footer a {
+            color: #ff758c;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h1>Interactive Google Maps</h1>
+        <p><strong>Nama:</strong> Raka Irfansabil Efendi</p>
+        <p><strong>NIM:</strong> 21240111</p>
+        <p><strong>Kelas:</strong> TRM7B</p>
+    </header>
+
+    <input id="pac-input" type="text" placeholder="Search for a location">
+    <div id="map"></div>
+
+    <footer>
+        <p>Developed by <strong>Raka Irfansabil Efendi</strong> | Powered by <a href="https://maps.google.com" target="_blank">Google Maps</a></p>
+    </footer>
+
+    <!-- Load the Google Maps JavaScript API with the Places library -->
+    <script async defer
+        src="https://maps.gomaps.pro/maps/api/js?key=AlzaSygQiEscMjBTyc3wfdr-di86BUvz6IBdhCF&libraries=geometry,places&callback=initMap">
+    </script>
+
+    <script>
+        let map;
+        let autocomplete;
+
+        function initMap() {
+            // Define the initial location
+            const initialLocation = { lat: -6.3290683117879105, lng: 106.82910572698337 };
+
+            // Initialize the map centered on the initial location
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: initialLocation,
+                zoom: 15
+            });
+
+            // Input field for place search
+            const input = document.getElementById('pac-input');
+
+            // Initialize autocomplete and bind it to the input field
+            autocomplete = new google.maps.places.Autocomplete(input);
+            autocomplete.bindTo('bounds', map);
+
+            // Place a marker on the initial location
+            new google.maps.Marker({
+                position: initialLocation,
+                map: map
+            });
+
+            // Event listener for place selection
+            autocomplete.addListener('place_changed', () => {
+                const place = autocomplete.getPlace();
+                if (!place.geometry) {
+                    console.log("No details available for the input: '" + place.name + "'");
+                    return;
+                }
+
+                // Adjust map view based on the place geometry
+                if (place.geometry.viewport) {
+                    map.fitBounds(place.geometry.viewport);
+                } else {
+                    map.setCenter(place.geometry.location);
+                    map.setZoom(17);
+                }
+
+                // Add a marker for the selected place
+                new google.maps.Marker({
+                    position: place.geometry.location,
+                    map: map
+                });
+            });
+        }
+    </script>
+</body>
+</html>
